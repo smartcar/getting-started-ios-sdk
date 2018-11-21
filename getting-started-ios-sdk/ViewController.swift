@@ -21,8 +21,9 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         
         self.vehicle.adjustsFontSizeToFitWidth = true
+        self.vehicle.textAlignment = .center
         
-        let clientId = "29123987-3302-4145-8422-5bfff70b7d89"
+        let clientId = "youClientId"
         
         appDelegate.smartcar = SmartcarAuth(clientId: clientId, redirectUri: "sc" + clientId + "://page", development: true, completion: completion)
     }
@@ -41,11 +42,11 @@ class ViewController: UIViewController {
         // send request to retrieve
         Alamofire.request("http://localhost:8000/callback?code=" + code!, method: .get).responseJSON {_ in
             Alamofire.request("http://localhost:8000/vehicle", method: .get).responseJSON { response in
+                self.button.removeFromSuperview()
                 print(response.result.value!)
                 
                 if let result = response.result.value {
                     let JSON = result as! NSDictionary
-                    print(JSON.object(forKey: "make"))
                     
                     let make = JSON.object(forKey: "make")!  as! String
                     let model = JSON.object(forKey: "model")!  as! String
@@ -53,7 +54,8 @@ class ViewController: UIViewController {
                     
                     let vehicle = year + " " + make + " " + model;
                     
-                    self.vehicle.text = vehicle                }
+                    self.vehicle.text = vehicle
+                }
             
                 self.viewDidAppear(_: true)
             }
