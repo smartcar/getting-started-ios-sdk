@@ -1,0 +1,20 @@
+PODS:
+  - Alamofire (4.7.2)
+  - SmartcarAuth (2.0.1)
+
+DEPENDENCIES:
+  - Alamofire (~> 4.7)
+  - SmartcarAuth
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Alamofire
+    - SmartcarAuth
+
+SPEC CHECKSUMS:
+  Alamofire: e4fa87002c137ba2d8d634d2c51fabcda0d5c223
+  SmartcarAuth: f1671f79f07fd837c351cfb1a7482ca5ba618581
+
+PODFILE CHECKSUM: d7b09c238b36caeee43f075a698a398bcd7824d1
+
+COCOAPODS: 1.5.2
