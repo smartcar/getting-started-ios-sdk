@@ -7,7 +7,7 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>scyourClientId</string>
+				<string>sc[yourClientId]</string>
 			</array>
 			<key>CFBundleURLName</key>
 			<string>Smartcar</string>
