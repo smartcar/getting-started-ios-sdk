@@ -17,24 +17,10 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zZx-hD-u6H">
-                                <rect key="frame" x="96" y="318.5" width="182" height="30"/>
-                                <state key="normal" title="CONNECT YOUR VEHICLE"/>
-                                <connections>
-                                    <action selector="connectPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Tc4-xT-uLP"/>
-                                </connections>
-                            </button>
-                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstItem="zZx-hD-u6H" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="CWo-zo-GRg"/>
-                            <constraint firstItem="zZx-hD-u6H" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="dJr-Gr-SWL"/>
-                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
-                        <outlet property="button" destination="zZx-hD-u6H" id="S3x-0x-Jiw"/>
                         <segue destination="2Zs-vg-EiM" kind="show" identifier="displayVehicleInfo" id="5Xs-fR-mEU"/>
                     </connections>
                 </viewController>

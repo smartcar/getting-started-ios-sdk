@@ -14,7 +14,6 @@ class ViewController: UIViewController {
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var vehicleText = ""
-    @IBOutlet weak var button: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,6 +22,13 @@ class ViewController: UIViewController {
         let clientId = "[yourClientId]"
         
         appDelegate.smartcar = SmartcarAuth(clientId: clientId, redirectUri: "sc" + clientId + "://page", development: true, completion: completion)
+        
+        // display a button
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 250, height: 50))
+        button.addTarget(self, action: #selector(self.connectPressed(_:)), for: .touchUpInside)
+        button.setTitle("Connect your vehicle", for: .normal)
+        button.backgroundColor = UIColor.black
+        self.view.addSubview(button)
     }
 
     override func didReceiveMemoryWarning() {
@@ -41,7 +47,6 @@ class ViewController: UIViewController {
             
             // send request to retrieve the vehicle info
             Alamofire.request("http://localhost:8000/vehicle", method: .get).responseJSON { response in
-                self.button.removeFromSuperview()
                 print(response.result.value!)
                 
                 if let result = response.result.value {
