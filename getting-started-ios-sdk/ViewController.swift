@@ -43,7 +43,7 @@ class ViewController: UIViewController {
     
     func completion(err: Error?, code: String?, state: String?) -> Any {
         // send request to exchange auth code for access token
-        Alamofire.request("http://localhost:8000/callback?code=" + code!, method: .get).responseJSON {_ in
+        Alamofire.request("http://localhost:8000/exchange?code=" + code!, method: .get).responseJSON {_ in
             
             // send request to retrieve the vehicle info
             Alamofire.request("http://localhost:8000/vehicle", method: .get).responseJSON { response in
