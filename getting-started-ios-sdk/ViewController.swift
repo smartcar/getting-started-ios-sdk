@@ -19,9 +19,12 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        let clientId = "[yourClientId]"
-        
-        appDelegate.smartcar = SmartcarAuth(clientId: clientId, redirectUri: "sc" + clientId + "://page", development: true, completion: completion)
+        appDelegate.smartcar = SmartcarAuth(
+            clientId: Constants.clientId,
+            redirectUri: "sc\(Constants.clientId)://exchange",
+            development: true,
+            completion: completion
+        )
         
         // display a button
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 250, height: 50))
@@ -43,10 +46,10 @@ class ViewController: UIViewController {
     
     func completion(err: Error?, code: String?, state: String?) -> Any {
         // send request to exchange auth code for access token
-        Alamofire.request("http://localhost:8000/exchange?code=" + code!, method: .get).responseJSON {_ in
+        Alamofire.request("\(Constants.appServer)/exchange?code=\(code!)", method: .get).responseJSON {_ in
             
             // send request to retrieve the vehicle info
-            Alamofire.request("http://localhost:8000/vehicle", method: .get).responseJSON { response in
+            Alamofire.request("\(Constants.appServer)/vehicle", method: .get).responseJSON { response in
                 print(response.result.value!)
                 
                 if let result = response.result.value {
@@ -56,7 +59,7 @@ class ViewController: UIViewController {
                     let model = JSON.object(forKey: "model")!  as! String
                     let year = String(JSON.object(forKey: "year")!  as! Int)
                     
-                    let vehicle = year + " " + make + " " + model
+                    let vehicle = "\(year) \(make) \(model)"
                     self.vehicleText = vehicle
                     
                     self.performSegue(withIdentifier: "displayVehicleInfo", sender: self)
