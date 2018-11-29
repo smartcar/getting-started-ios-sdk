@@ -1,0 +1,6 @@
+module SmartcarAuth {
+  umbrella header "SmartcarAuth-umbrella.h"
+
+  export *
+  module * { export * }
+}

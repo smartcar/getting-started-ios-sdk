@@ -1,0 +1,6 @@
+module Pods_getting_started_ios_sdk {
+  umbrella header "Pods-getting-started-ios-sdk-umbrella.h"
+
+  export *
+  module * { export * }
+}
