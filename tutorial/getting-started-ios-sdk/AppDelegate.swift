@@ -44,7 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, handleOpen url: URL) -> Bool {
-        // TODO: Step 7a: Receive an authorization code
+        // TODO: Authorization Step 3a: Receive an authorization code
         
         return true
     }

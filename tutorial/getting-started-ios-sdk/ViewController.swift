@@ -19,7 +19,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        // TODO: Step 5: Initialize the Smartcar object
+        // TODO: Authorization Step 1: Initialize the Smartcar object
         
         // display a button
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 250, height: 50))
@@ -35,15 +35,15 @@ class ViewController: UIViewController {
     }
     
     @IBAction func connectPressed(_ sender: UIButton) {
-        // TODO: Step 6: Launch authorization flow
+        // TODO: Authorization Step 2: Launch authorization flow
     }
     
     func completion(err: Error?, code: String?, state: String?) -> Any {
-        // TODO: Step 7b: Receive an authorization code
+        // TODO: Authorization Step 3b: Receive an authorization code
         
-        // TODO: Step 8: Obtain an access token
+        // TODO: Request Step 1: Obtain an access token
         
-        // TODO: Step 9: Get vehicle information
+        // TODO: Request Step 2: Get vehicle information
         
         return ""
     }
