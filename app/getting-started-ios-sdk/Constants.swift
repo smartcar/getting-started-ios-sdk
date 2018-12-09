@@ -9,6 +9,6 @@
 import Foundation
 
 struct Constants {
-    static let clientId = "<your-client-id>";
+    static let clientId = "<your-client-id>"
     static let appServer = "<app-server>"
 }

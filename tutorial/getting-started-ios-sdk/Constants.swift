@@ -10,6 +10,6 @@ import Foundation
 
 struct Constants {
     // TODO: Step 4: Initialize your application
-    static let clientId = "<your-client-id>";
+    static let clientId = "<your-client-id>"
     static let appServer = "<app-server>"
 }
