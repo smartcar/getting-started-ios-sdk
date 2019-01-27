@@ -19,8 +19,8 @@ Next, we need to setup the custom URL scheme in the `Info.plist` -
 ![Info.plist](img/infoPlist.png)
 
 Before setting up the client code, make sure to set up the server code. You can use any of our following back-end SDKs -
-* [Node SDK](https://github.com/smartcar/getting-started-node-sdk/tree/add-starter-kit)
-* [Python SDK](https://github.com/smartcar/getting-started-python-sdk/tree/add-starter-kit)
+* [Node SDK](https://github.com/smartcar/getting-started-node-sdk)
+* [Python SDK](https://github.com/smartcar/getting-started-python-sdk)
 * [Java SDK](https://github.com/smartcar/getting-started-java-sdk)
 
 Follow the setup instructions in the back-end README except for the `redirect_uri`. Make sure the `redirect_uri` environment variable in the back-end directory is the same as the one we have set above.
@@ -41,4 +41,4 @@ To install the required dependencies -
 $ pod install
 ```
 
-Launch the `getting-started-ios-sdk.cxworkspace` and run the iOS simulator within XCode! In our current set up, we are using Smartcar's [test mode](https://smartcar.com), so you can log in with any username and password and you will see information of a simulated vehicle.
+Launch the `getting-started-ios-sdk.cxworkspace` and run the iOS simulator within XCode! In our current set up, we are using Smartcar's [test mode](https://smartcar.com/docs/guides/testing/), so you can log in with any username and password and you will see information of a simulated vehicle.
