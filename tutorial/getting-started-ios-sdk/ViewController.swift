@@ -35,7 +35,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func connectPressed(_ sender: UIButton) {
-        // TODO: Authorization Step 2: Launch authorization flow
+        // TODO: Authorization Step 2: Launch Connect
     }
     
     func completion(err: Error?, code: String?, state: String?) -> Any {
