@@ -30,13 +30,14 @@ Smartcar Authentication SDK for iOS written in Swift 3.
     - Facilitates the flow with a SFSafariViewController to redirect to Smartcar and retrieve an authorization code
 */
 
-public class SmartcarAuth: NSObject {
-
+@objc public class SmartcarAuth: NSObject {
     var clientId: String
     var redirectUri: String
     var scope: [String]
     var completion: (Error?, String?, String?) -> Any?
     var development: Bool
+    // NSNumber? is used here instead of Bool? because there is no concept of Bool? in Objective-C
+    var testMode: NSNumber?
 
     /**
     Constructor for the SmartcarAuth
@@ -45,15 +46,17 @@ public class SmartcarAuth: NSObject {
         - clientId: app client id
         - redirectUri: app redirect uri
         - scope: app oauth scope
-        - development: optional, shows the mock OEM for testing, defaults to false
+        - development: shows the mock OEM for testing, defaults to false. This is deprecated and has been replaced with testMode.
+        - testMode: optional, launch the Smartcar auth flow in test mode, defaults to nil.
         - completion: callback function called upon the completion of the OAuth flow with the error, the auth code, and the state string
     */
-    public init(clientId: String, redirectUri: String, scope: [String] = [], development: Bool = false, completion: @escaping (Error?, String?, String?) -> Any?) {
+    @objc public init(clientId: String, redirectUri: String, scope: [String] = [], development: Bool =  false, testMode: NSNumber? = nil, completion: @escaping (Error?, String?, String?) -> Any?) {
         self.clientId = clientId
         self.redirectUri = redirectUri
         self.scope = scope
         self.completion = completion
         self.development = development
+        self.testMode = testMode
     }
 
     /**
@@ -62,11 +65,13 @@ public class SmartcarAuth: NSObject {
     - parameters:
         - state: optional, oauth state
         - forcePrompt: optional, forces permission screen if set to true, defaults to false
+        - vehicleInfo: optional, when 'make' property is present, allows user to bypass oem selector screen and go straight to vehicle login screen, defaults to nil
+        - singleSelect: optional, controls the behavior of the grant dialog and by only allowing the user to select a single vehicle to authorize, defaults to nil
         - viewController: the viewController responsible for presenting the SFSafariView
     */
-    public func launchAuthFlow(state: String? = nil, forcePrompt: Bool = false, viewController: UIViewController) {
+    @objc public func launchAuthFlow(state: String? = nil, forcePrompt: Bool = false, vehicleInfo: VehicleInfo? = nil, singleSelect: NSNumber? = nil, viewController: UIViewController) {
 
-        let safariVC = SFSafariViewController(url: URL(string: generateUrl(state: state, forcePrompt: forcePrompt))!)
+        let safariVC = SFSafariViewController(url: URL(string: generateUrl(state: state, forcePrompt: forcePrompt, vehicleInfo: vehicleInfo, singleSelect: singleSelect))!)
         viewController.present(safariVC, animated: true, completion: nil)
     }
 
@@ -76,12 +81,13 @@ public class SmartcarAuth: NSObject {
     - parameters:
         - state: optional, oauth state
         - forcePrompt: optional, forces permission screen if set to true, defaults to false
-
+        - vehicleInfo: optional, when 'make' property is present, allows user to bypass oem selector screen and go straight to vehicle login screen, defaults to nil
+        - singleSelect: optional, controls the behavior of the grant dialog and by only allowing the user to select a single vehicle to authorize, defaults to nil
     - returns:
     authorization request URL
 
     */
-    public func generateUrl(state: String? = nil, forcePrompt: Bool = false) -> String {
+    @objc public func generateUrl(state: String? = nil, forcePrompt: Bool = false, vehicleInfo: VehicleInfo? = nil, singleSelect: NSNumber? = nil) -> String {
         var components = URLComponents(string: "https://\(domain)/oauth/authorize")!
 
         var queryItems: [URLQueryItem] = []
@@ -94,19 +100,36 @@ public class SmartcarAuth: NSObject {
         }
 
         if !scope.isEmpty {
-            if let scopeString = self.scope.joined(separator: " ").addingPercentEncoding( withAllowedCharacters: .urlQueryAllowed) {
-                queryItems.append(URLQueryItem(name: "scope", value: scopeString))
-            }
+            let scopeString = self.scope.joined(separator: " ")
+            queryItems.append(URLQueryItem(name: "scope", value: scopeString))
 
         }
 
         queryItems.append(URLQueryItem(name: "approval_prompt", value: forcePrompt ? "force" : "auto"))
 
-        if let stateString = state?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+        if let stateString = state {
             queryItems.append(URLQueryItem(name: "state", value: stateString))
         }
 
-        queryItems.append(URLQueryItem(name: "mock", value: String(self.development)))
+        // if testMode specified, override self.development
+        var mode = self.development;
+        if (self.testMode != nil) {
+          // convert NSNumber to Bool
+           mode = self.testMode!.boolValue;
+        }
+
+        queryItems.append(URLQueryItem(name: "mode", value: mode ? "test" : "live"))
+
+        if let vehicleObject = vehicleInfo {
+            if let vehicleObjectMake = vehicleObject.make {
+                queryItems.append(URLQueryItem(name: "make", value: vehicleObjectMake))
+            }
+        }
+
+        if let singleSelectValue = singleSelect {
+            let singleSelectBoolValue = singleSelectValue.boolValue;
+            queryItems.append(URLQueryItem(name: "single_select", value: singleSelectBoolValue ? "true" : "false"))
+        }
 
         components.queryItems = queryItems
 
@@ -123,21 +146,54 @@ public class SmartcarAuth: NSObject {
     the output of the executed completion function
     */
 
-    public func handleCallback(with url: URL) -> Any? {
+    @objc public func handleCallback(with url: URL) -> Any? {
         let urlComp = URLComponents(url: url, resolvingAgainstBaseURL: false)
 
         guard let query = urlComp?.queryItems else {
-            return completion(AuthorizationError.missingQueryParameters, nil, nil)
+            let authorizationError = AuthorizationError(type: .missingQueryParameters, errorDescription: nil, vehicleInfo: nil)
+            return completion(authorizationError, nil, nil)
         }
 
         let queryState = query.filter({ $0.name == "state"}).first?.value
+        
+        let vehicle = VehicleInfo()
+        
+        if let vin = query.filter({ $0.name == "vin"}).first?.value {
+            vehicle.vin = vin
+            if let make = query.filter({ $0.name == "make"}).first?.value {
+                vehicle.make = make
+            }
+            if let model = query.filter({ $0.name == "model"}).first?.value {
+                vehicle.model = model
+            }
+            if let year = query.filter({ $0.name == "year"}).first?.value {
+                vehicle.year = Int(year)
+            }
+        }
+        
+        let error = query.filter({ $0.name == "error"}).first?.value
+        let errorDescription = query.filter({ $0.name == "error_description"}).first?.value
+        
+        if (error != nil) {
+            switch (error) {
+                case "vehicle_incompatible":
+                    let authorizationError = AuthorizationError(type: .vehicleIncompatible, errorDescription: errorDescription, vehicleInfo: vehicle)
 
-        if query.filter({ $0.name == "error"}).first?.value != nil {
-            return completion(AuthorizationError.accessDenied, nil, queryState)
+                    return completion(authorizationError, nil, queryState)
+                case "access_denied":
+                    let authorizationError = AuthorizationError(type: .accessDenied, errorDescription: errorDescription, vehicleInfo: nil)
+                    
+                    return completion(authorizationError, nil, queryState)
+                default:
+                    let authorizationError = AuthorizationError(type: .accessDenied, errorDescription: errorDescription, vehicleInfo: nil)
+                    
+                    return completion(authorizationError, nil, queryState)
+            }
         }
 
         guard let code = query.filter({ $0.name == "code"}).first?.value else {
-            return completion(AuthorizationError.missingAuthCode, nil, queryState)
+            let authorizationError = AuthorizationError(type: .missingAuthCode, errorDescription: nil, vehicleInfo: nil)
+            return completion(authorizationError, nil, queryState)
         }
 
         return completion(nil, code, queryState)

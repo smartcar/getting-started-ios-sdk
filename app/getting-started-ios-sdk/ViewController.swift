@@ -22,7 +22,8 @@ class ViewController: UIViewController {
         appDelegate.smartcar = SmartcarAuth(
             clientId: Constants.clientId,
             redirectUri: "sc\(Constants.clientId)://exchange",
-            development: true,
+            testMode: true,
+            scope: ["required:read_vehicle_info"],
             completion: completion
         )
         
