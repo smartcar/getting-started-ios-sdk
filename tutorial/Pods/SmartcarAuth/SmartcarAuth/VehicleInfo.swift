@@ -1,5 +1,5 @@
 /*
- AuthorizationError.swift
+ VehicleInfo.swift
  SmartcarAuth
  
  Copyright (c) 2017-present, Smartcar, Inc. All rights reserved.
@@ -20,15 +20,16 @@
  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-struct AuthorizationError: Error {
-    enum ErrorType {
-        case missingQueryParameters
-        case missingAuthCode
-        case accessDenied
-        case vehicleIncompatible
-    }
+@objc public class VehicleInfo: NSObject {
+    var vin: String?
+    var make: String?
+    var model: String?
+    var year: Int?
     
-    let type: ErrorType
-    let errorDescription: String?
-    let vehicleInfo: VehicleInfo?
+    public init(vin: String? = nil, make: String? = nil, year: Int? = nil, model: String? = nil) {
+        self.vin = vin
+        self.make = make
+        self.year = year
+        self.model = model
+    }
 }
